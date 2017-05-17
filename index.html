@@ -7,8 +7,8 @@
         <meta name="keywords" content="">
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
-        <!-- Stylesheets: -->
         <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+        <script rel='javascript' src='scripts/knockout-3.4.2.js'></script>
         <script>
             WebFont.load({
                 google: {
@@ -20,11 +20,17 @@
         <link rel='stylesheet' media="(max-width: 575px)" href="css/small-screen.css">
         <link rel='stylesheet' media="(min-width: 576px) and (max-width: 992px)" href="css/medium-screen.css">
         <link rel='stylesheet' media="(min-width: 993px)" href="css/large-screen.css">
-        <!-- jquery cdn-->
-
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
     </head>
     <body>
+        <div class="places-nav">
+            <h1>Ryan's Pizza Map</h1>
+            <span style="font-style:italic">Search:</span>
+            <input class="pizza-search" type="text" />
+            <h2>Places:</h2>
+            <ul class="places-list">
+            </ul>
+        </div>
         <div id="map"></div>
         <script src="scripts/main.js"></script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-hAX2EMrNNUVVeISPz_ZAOsYxBUerBIg&v=3&callback=initMap"></script>
