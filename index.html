@@ -28,7 +28,8 @@
             <span style="font-style:italic">Search:</span>
             <input class="pizza-search" type="text" />
             <h2>Places:</h2>
-            <ul class="places-list">
+            <ul class="places-list" data-bind="foreach: pizzaPlaces">
+                <li data-bind="text: name"></li>
             </ul>
         </div>
         <div id="map"></div>
