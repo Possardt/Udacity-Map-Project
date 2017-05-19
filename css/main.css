@@ -25,3 +25,7 @@ html, body {
     border-bottom: 1px solid black;
     font-size: 18px;
 }
+
+.places-list {
+    list-style-type: none;
+}

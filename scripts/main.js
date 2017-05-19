@@ -1,9 +1,17 @@
 var map;
 var pizzaPlaces = [
-    {name: 'Randy\'s',
+    {name: 'Randy\'s Wooster Street Pizza',
     position: {lat: 41.7656821, lng : -72.7151063},
     id: 'RandysOne',
-    stars: 3 }
+    stars: 3 },
+    {name: 'Sgt. Pepperoni',
+    position: {lat: 41.8096455, lng: -72.2637633},
+    id: 'SgtPeps',
+    stars: 4},
+    {name: 'Frank Pepe Pizzeria Napoletana',
+    position: {lat: 41.5561578, lng: -72.784267},
+    id: 'FrankPepe',
+    stars: 5}
 ];
 
 function initMap(){
@@ -33,7 +41,9 @@ function PizzaMapViewModel() {
     var self = this;
 
     self.pizzaPlaces = ko.observableArray([
-        new pizzaPlace(pizzaPlaces[0].name, pizzaPlaces[0].stars)
+        new pizzaPlace(pizzaPlaces[0].name, pizzaPlaces[0].stars),
+        new pizzaPlace(pizzaPlaces[1].name, pizzaPlaces[1].stars),
+        new pizzaPlace(pizzaPlaces[2].name, pizzaPlaces[2].stars)
     ]);
 }
 
