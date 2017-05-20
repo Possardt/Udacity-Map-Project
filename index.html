@@ -12,7 +12,7 @@
         <script>
             WebFont.load({
                 google: {
-                    families: ['Maven Pro']
+                    families: ['Architects Daughter']
                 }
             });
         </script>
@@ -24,12 +24,12 @@
     </head>
     <body>
         <div class="places-nav">
-            <h1>Ryan's Pizza Map</h1>
+            <h1 class="places-title">Ryan's Pizza Map</h1>
             <span style="font-style:italic">Search:</span>
             <input class="pizza-search" type="text" />
             <h2>Places:</h2>
             <ul class="places-list" data-bind="foreach: pizzaPlaces">
-                <li data-bind="text: name"></li>
+                <li class="places-list-item" data-bind="text: name"></li>
             </ul>
         </div>
         <div id="map"></div>
