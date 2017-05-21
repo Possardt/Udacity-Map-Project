@@ -28,9 +28,18 @@
             <span style="font-style:italic">Search:</span>
             <input class="pizza-search" type="text" />
             <h2>Places:</h2>
-            <ul class="places-list" data-bind="foreach: pizzaPlaces">
-                <li class="places-list-item" data-bind="text: name"></li>
-            </ul>
+            <table class="places-list">
+                <tr>
+                    <th>Place</th>
+                    <th>Stars</th>
+                </tr>
+                <tbody data-bind="foreach: pizzaPlaces">
+                    <tr>
+                        <td class="places-list-item" data-bind="text: name"></td>
+                        <td class="places-list-stars" data-bind="text: stars"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div id="map"></div>
         <script src="scripts/main.js"></script>

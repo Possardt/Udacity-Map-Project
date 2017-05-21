@@ -45,6 +45,15 @@ function PizzaMapViewModel() {
         new pizzaPlace(pizzaPlaces[1].name, pizzaPlaces[1].stars),
         new pizzaPlace(pizzaPlaces[2].name, pizzaPlaces[2].stars)
     ]);
+
+    self.Query = ko.observable('');
+
+    self.searchResults = ko.computed(function() {
+        var q = pizzaPlaces.Query();
+        return pizzaPlaces.filter(function(p){
+            return p.name.toLowerCase().indexOf(q) >= 0;
+        });
+    })
 }
 
 ko.applyBindings(new PizzaMapViewModel());
