@@ -41,9 +41,12 @@ html, body {
     font-size:1.5em;
     padding-bottom: 0.5em;
     padding-top: 0.5em;
-
 }
 
-.places-list-item:hover{
-    background-color: rgba(255,255,255,0.8);
+.places-list-stars{
+    text-align: center;
+}
+
+.places-row:hover {
+    background-color: rgba(255, 102, 102, 0.7);
 }

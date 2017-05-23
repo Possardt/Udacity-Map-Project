@@ -26,15 +26,15 @@
         <div class="places-nav">
             <h1 class="places-title">Ryan's Pizza Map</h1>
             <span style="font-style:italic">Search:</span>
-            <input class="pizza-search" type="text" />
+            <input class="pizza-search" data-bind="value: Query, valueUpdate: 'keyup'" type="text" />
             <h2>Places:</h2>
-            <table class="places-list">
+            <table cellspacing="0" cellpadding="0" class="places-list">
                 <tr>
                     <th>Place</th>
                     <th>Stars</th>
                 </tr>
-                <tbody data-bind="foreach: pizzaPlaces">
-                    <tr>
+                <tbody data-bind="foreach: searchResults">
+                    <tr class="places-row">
                         <td class="places-list-item" data-bind="text: name"></td>
                         <td class="places-list-stars" data-bind="text: stars"></td>
                     </tr>
