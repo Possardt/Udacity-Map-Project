@@ -1,9 +1,10 @@
 var map;
 var markers = [];
+var bear_token="Bearer P1nbZYhvPFiahKR8epZimGpzJQhFAvHt-eZDkqij5UzpQWe_f2Rq6jAOPHuhHSohYdYEz9E_uoGJ8Us1XeQZ20Ryf2cIheHYtBW55-k19A-WArFLXcB0btifZu4lWXYx";
 var pizzaPlaces = [
     {name: 'Randy\'s Wooster Street Pizza',
     position: {lat: 41.7656821, lng : -72.7151063},
-    id: 'RandysOne',
+    id: 'randys-wooster-street-pizza-manchester',
     stars: 3 },
     {name: 'Sgt. Pepperoni',
     position: {lat: 41.8096455, lng: -72.2637633},
@@ -22,6 +23,8 @@ var pizzaPlaces = [
     id: 'Blaze',
     stars: 3.5} 
 ];
+
+
 
 function stopBouncing(){
     for(var i = 0; i < markers.length; i++){
@@ -57,7 +60,8 @@ function initMap(){
             position: pizzaPlaces[i].position,
             title: pizzaPlaces[i].name,
             animation: google.maps.Animation.DROP,
-            id: pizzaPlaces[i].id
+            id: pizzaPlaces[i].id,
+            someText: 'test'
         });
         markers.push(marker);
         marker.addListener('click', function(){
@@ -115,3 +119,25 @@ function PizzaMapViewModel() {
 }
 
 ko.applyBindings(new PizzaMapViewModel());
+
+for(var i = 0; i < markers.length; i++){
+
+}
+
+$(document).ready(function(){
+    $('.collapse').on('click', function(){
+        $('.chev').toggleClass('rotate');
+        $('.places-nav').toggleClass('move-up');
+    });
+    $.ajax({
+        type: "GET",
+        dataType: "jsonp",
+        beforeSend:function(request){
+            request.setRequestHeader("Authorization", bear_token);
+        },
+        url: "https://api.yelp.com/v3/businesses/randys-wooster-street-pizza-manchester",
+        success: function(response){
+            console.log(response);
+        }
+    });
+});
