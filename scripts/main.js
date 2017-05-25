@@ -1,26 +1,25 @@
 var map;
 var markers = [];
-var bear_token="Bearer P1nbZYhvPFiahKR8epZimGpzJQhFAvHt-eZDkqij5UzpQWe_f2Rq6jAOPHuhHSohYdYEz9E_uoGJ8Us1XeQZ20Ryf2cIheHYtBW55-k19A-WArFLXcB0btifZu4lWXYx";
 var pizzaPlaces = [
     {name: 'Randy\'s Wooster Street Pizza',
     position: {lat: 41.7656821, lng : -72.7151063},
-    id: 'randys-wooster-street-pizza-manchester',
+    id: '17198207',
     stars: 3 },
     {name: 'Sgt. Pepperoni',
     position: {lat: 41.8096455, lng: -72.2637633},
-    id: 'SgtPeps',
+    id: '17199083',
     stars: 4},
     {name: 'Frank Pepe Pizzeria Napoletana',
     position: {lat: 41.5561578, lng: -72.784267},
-    id: 'FrankPepe',
+    id: '17197345',
     stars: 5},
     {name: 'Camille\'s Wood Fired Pizza',
     position: {lat: 41.8592744, lng: -72.3590443},
-    id: 'Camille',
+    id: '17199802',
     stars: 4.5},
     {name: 'Blaze Pizza',
     position: {lat: 41.8038787, lng: -72.244823},
-    id: 'Blaze',
+    id: '18256728',
     stars: 3.5} 
 ];
 
@@ -33,17 +32,33 @@ function stopBouncing(){
 };
 
 function populateInfoWindow(marker, infowindow){
-    stopBouncing();
-    if(infowindow.marker !== marker){
+    stopBouncing();    
+    if(infowindow.marker != marker){
         infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title + '</div>');
+        infowindow.setContent('<h3>' + marker.title + '</h3>' + marker.zomato);
+        if(marker.zomato === null){
+            getZomatoRating(marker,infowindow);
+            infowindow.setContent('<h3>' + marker.title + '</h3><br/><div style="text-align:center"><img src=\"loading_pizza.gif\"></div>');
+        }else{
+            infowindow.setContent('<h3>' + marker.title + '</h3>Zomato Rating: ' + marker.zomato);
+        }
         infowindow.open(map, marker);
         marker.setAnimation(google.maps.Animation.BOUNCE);
         infowindow.addListener('closeclick',function(){
             infowindow.marker.setAnimation(null);
-            //infowindow.setMarker(null);
         });
     }
+};
+
+function getZomatoRating(marker, iw){
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.id, true);
+    xhr.setRequestHeader("user-key", "2513ead54fc4765f6ad315bab0284084");
+    xhr.onload = function(response){
+        marker.zomato = JSON.parse(response.target.responseText).user_rating.aggregate_rating;
+        iw.setContent('<h3>' + marker.title + '</h3>Zomato Rating: ' + marker.zomato);
+    };
+    xhr.send();
 };
 
 function initMap(){
@@ -61,7 +76,7 @@ function initMap(){
             title: pizzaPlaces[i].name,
             animation: google.maps.Animation.DROP,
             id: pizzaPlaces[i].id,
-            someText: 'test'
+            zomato: null
         });
         markers.push(marker);
         marker.addListener('click', function(){
@@ -103,7 +118,8 @@ function PizzaMapViewModel() {
         new pizzaPlace(pizzaPlaces[0].name, pizzaPlaces[0].stars),
         new pizzaPlace(pizzaPlaces[1].name, pizzaPlaces[1].stars),
         new pizzaPlace(pizzaPlaces[2].name, pizzaPlaces[2].stars),
-        new pizzaPlace(pizzaPlaces[3].name, pizzaPlaces[3].stars)
+        new pizzaPlace(pizzaPlaces[3].name, pizzaPlaces[3].stars),
+        new pizzaPlace(pizzaPlaces[4].name, pizzaPlaces[4].stars)
     ]);
 
     self.Query = ko.observable('');
@@ -120,24 +136,22 @@ function PizzaMapViewModel() {
 
 ko.applyBindings(new PizzaMapViewModel());
 
-for(var i = 0; i < markers.length; i++){
-
-}
+function findMarker(name){
+    for(var i = 0; i < markers.length; i++){
+        if(markers[i].title === name){
+            return markers[i];
+        }
+    }
+};
 
 $(document).ready(function(){
     $('.collapse').on('click', function(){
         $('.chev').toggleClass('rotate');
         $('.places-nav').toggleClass('move-up');
     });
-    $.ajax({
-        type: "GET",
-        dataType: "jsonp",
-        beforeSend:function(request){
-            request.setRequestHeader("Authorization", bear_token);
-        },
-        url: "https://api.yelp.com/v3/businesses/randys-wooster-street-pizza-manchester",
-        success: function(response){
-            console.log(response);
-        }
+    var infowindow = new google.maps.InfoWindow();
+    $('.places-row').on('click',function(e){
+        var marker = findMarker($(this).find('.places-list-item')[0].textContent);
+        populateInfoWindow(marker, infowindow);
     });
 });
