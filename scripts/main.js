@@ -1,6 +1,6 @@
 var map;
 var markers = [];
-var pizzaPlaces = [
+var pizzaPlacesOriginal = [
     {name: 'Randy\'s Wooster Street Pizza',
     position: {lat: 41.7656821, lng : -72.7151063},
     id: '17198207',
@@ -22,8 +22,6 @@ var pizzaPlaces = [
     id: '18256728',
     stars: 3.5} 
 ];
-
-
 
 function stopBouncing(){
     for(var i = 0; i < markers.length; i++){
@@ -50,17 +48,25 @@ function populateInfoWindow(marker, infowindow){
     }
 };
 
+//XHR call to get zomato rating that gets displayed in infowindow
 function getZomatoRating(marker, iw){
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.id, true);
     xhr.setRequestHeader("user-key", "2513ead54fc4765f6ad315bab0284084");
-    xhr.onload = function(response){
-        marker.zomato = JSON.parse(response.target.responseText).user_rating.aggregate_rating;
-        iw.setContent('<h3>' + marker.title + '</h3>Zomato Rating: ' + marker.zomato);
+    xhr.onreadystatechange = function(response){
+        if(this.readyState === 4){
+            if(this.status === 200){
+                marker.zomato = JSON.parse(response.target.responseText).user_rating.aggregate_rating;
+                iw.setContent('<h3>' + marker.title + '</h3>Zomato Rating: ' + marker.zomato);
+            }else{
+                console.log("ERROR", this.statusText);
+            }
+        }
     };
     xhr.send();
 };
 
+//Google map's init method, set in callback in script tag
 function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 41.7456421, lng : -72.5551063},
@@ -69,29 +75,28 @@ function initMap(){
 
     var largeInfowindow = new google.maps.InfoWindow();
 
-    for(var i = 0; i < pizzaPlaces.length; i++){
+    for(var i = 0; i < pizzaPlacesOriginal.length; i++){
         var marker = new google.maps.Marker({
             map: map,
-            position: pizzaPlaces[i].position,
-            title: pizzaPlaces[i].name,
+            position: pizzaPlacesOriginal[i].position,
+            title: pizzaPlacesOriginal[i].name,
             animation: google.maps.Animation.DROP,
-            id: pizzaPlaces[i].id,
+            id: pizzaPlacesOriginal[i].id,
             zomato: null
         });
         markers.push(marker);
         marker.addListener('click', function(){
             populateInfoWindow(this, largeInfowindow);
         });
+        marker.openInfoWindow = function(){
+            populateInfoWindow(this, largeInfowindow);
+        };
     }
 
 }
 
-function pizzaPlace(name, stars){
-    var self = this;
-    self.name = ko.observable(name);
-    self.stars = ko.observable(stars);
-};
 
+//Marker utility functions
 function isMarkerShown(marker, places){
     for(var i = 0; i < places.length; i++){
         if(marker.id === places[i].id){
@@ -111,31 +116,6 @@ function updateMarkers(fPlaces){
     }
 };
 
-function PizzaMapViewModel() {
-    var self = this;
-
-    self.pizzaPlaces = ko.observableArray([
-        new pizzaPlace(pizzaPlaces[0].name, pizzaPlaces[0].stars),
-        new pizzaPlace(pizzaPlaces[1].name, pizzaPlaces[1].stars),
-        new pizzaPlace(pizzaPlaces[2].name, pizzaPlaces[2].stars),
-        new pizzaPlace(pizzaPlaces[3].name, pizzaPlaces[3].stars),
-        new pizzaPlace(pizzaPlaces[4].name, pizzaPlaces[4].stars)
-    ]);
-
-    self.Query = ko.observable('');
-
-    self.searchResults = ko.computed(function() {
-        var q = self.Query();
-        filteredPlaces = pizzaPlaces.filter(function(p){
-            return p.name.toLowerCase().indexOf(q) >= 0;
-        });
-        updateMarkers(filteredPlaces);
-        return filteredPlaces;
-    });
-}
-
-ko.applyBindings(new PizzaMapViewModel());
-
 function findMarker(name){
     for(var i = 0; i < markers.length; i++){
         if(markers[i].title === name){
@@ -144,14 +124,67 @@ function findMarker(name){
     }
 };
 
+
+//Knockout viewmodel setup
+function PizzaPlace(name, stars){
+    var self = this;
+    self.name = name;
+    self.stars = stars;
+    self.show = ko.observable(true);
+};
+
+function PizzaMapViewModel() {
+    var self = this;
+
+    self.pizzaPlaces = ko.observableArray([
+        new PizzaPlace(pizzaPlacesOriginal[0].name, pizzaPlacesOriginal[0].stars),
+        new PizzaPlace(pizzaPlacesOriginal[1].name, pizzaPlacesOriginal[1].stars),
+        new PizzaPlace(pizzaPlacesOriginal[2].name, pizzaPlacesOriginal[2].stars),
+        new PizzaPlace(pizzaPlacesOriginal[3].name, pizzaPlacesOriginal[3].stars),
+        new PizzaPlace(pizzaPlacesOriginal[4].name, pizzaPlacesOriginal[4].stars)
+    ]);
+
+    self.Query = ko.observable('');
+
+    self.searchResults = ko.computed(function() {
+        var q = self.Query();
+        /*
+        self.pizzaPlaces().forEach(function(p){
+            if(p.name.toLowerCase().indexOf(q) >= 0){
+                p.show = true;
+            }else{
+                p.show = false;
+                //console.log(p);
+            }
+        });*/
+        for(var i = 0; i < self.pizzaPlaces().length; i++){
+            if(self.pizzaPlaces()[i].name.toLowerCase().indexOf(q) >= 0){
+                self.pizzaPlaces()[i].show = true;
+            }else{
+                self.pizzaPlaces()[i].show = false;
+            }
+        }
+        console.log(self.pizzaPlaces());
+        //console.log(self.pizzaPlaces()[0]);
+        filteredPlaces = pizzaPlacesOriginal.filter(function(p){
+            return p.name.toLowerCase().indexOf(q) >= 0;
+        });
+
+        updateMarkers(filteredPlaces);
+        return filteredPlaces;
+    });
+
+    self.showInfoWindow = function(place){
+        findMarker(place.name).openInfoWindow();
+    };
+}
+
+ko.applyBindings(new PizzaMapViewModel());
+
 $(document).ready(function(){
+    //listener for collapsing the places menu
     $('.collapse').on('click', function(){
         $('.chev').toggleClass('rotate');
         $('.places-nav').toggleClass('move-up');
-    });
-    var infowindow = new google.maps.InfoWindow();
-    $('.places-row').on('click',function(e){
-        var marker = findMarker($(this).find('.places-list-item')[0].textContent);
-        populateInfoWindow(marker, infowindow);
     });
 });
