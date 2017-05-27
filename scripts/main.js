@@ -20,7 +20,7 @@ var pizzaPlacesOriginal = [
     {name: 'Blaze Pizza',
     position: {lat: 41.8038787, lng: -72.244823},
     id: '18256728',
-    stars: 3.5} 
+    stars: 3.5}
 ];
 
 function stopBouncing(){
@@ -30,7 +30,7 @@ function stopBouncing(){
 };
 
 function populateInfoWindow(marker, infowindow){
-    stopBouncing();    
+    stopBouncing();
     if(infowindow.marker != marker){
         infowindow.marker = marker;
         infowindow.setContent('<h3>' + marker.title + '</h3>' + marker.zomato);
@@ -186,5 +186,12 @@ $(document).ready(function(){
     $('.collapse').on('click', function(){
         $('.chev').toggleClass('rotate');
         $('.places-nav').toggleClass('move-up');
+    });
+
+    $('.places-row').on('click', function(){
+        if($(window).width() < 762){
+            $('.chev').toggleClass('rotate');
+            $('.places-nav').toggleClass('move-up');
+        }
     });
 });
