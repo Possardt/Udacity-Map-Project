@@ -35,7 +35,8 @@
                 </tr>
                 <tbody data-bind="foreach: pizzaPlaces">
                     <tr class="places-row" data-bind="click: $parent.showInfoWindow">
-                        <td class="places-list-item" data-bind="text: name, visible: show"></td>
+                        <td class="places-list-item" data-bind="text: name
+                        "></td>
                         <td class="places-list-stars" data-bind="text: stars"></td>
                     </tr>
                 </tbody>

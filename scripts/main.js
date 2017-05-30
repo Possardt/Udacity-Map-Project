@@ -148,28 +148,9 @@ function PizzaMapViewModel() {
 
     self.searchResults = ko.computed(function() {
         var q = self.Query();
-        /*
-        self.pizzaPlaces().forEach(function(p){
-            if(p.name.toLowerCase().indexOf(q) >= 0){
-                p.show = true;
-            }else{
-                p.show = false;
-                //console.log(p);
-            }
-        });*/
-        for(var i = 0; i < self.pizzaPlaces().length; i++){
-            if(self.pizzaPlaces()[i].name.toLowerCase().indexOf(q) >= 0){
-                self.pizzaPlaces()[i].show = true;
-            }else{
-                self.pizzaPlaces()[i].show = false;
-            }
-        }
-        console.log(self.pizzaPlaces());
-        //console.log(self.pizzaPlaces()[0]);
         filteredPlaces = pizzaPlacesOriginal.filter(function(p){
             return p.name.toLowerCase().indexOf(q) >= 0;
         });
-
         updateMarkers(filteredPlaces);
         return filteredPlaces;
     });
