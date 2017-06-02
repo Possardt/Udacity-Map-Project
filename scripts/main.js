@@ -1,3 +1,7 @@
+function googleMapsError(){
+    alert('Unable to load Google Maps.');
+}
+
 var map;
 var markers = [];
 var pizzaPlacesOriginal = [
