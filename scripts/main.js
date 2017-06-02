@@ -27,7 +27,7 @@ function stopBouncing(){
     for(var i = 0; i < markers.length; i++){
         markers[i].setAnimation(null);
     }
-};
+}
 
 function populateInfoWindow(marker, infowindow){
     stopBouncing();
@@ -46,7 +46,7 @@ function populateInfoWindow(marker, infowindow){
             infowindow.marker.setAnimation(null);
         });
     }
-};
+}
 
 //XHR call to get zomato rating that gets displayed in infowindow
 function getZomatoRating(marker, iw){
@@ -59,12 +59,15 @@ function getZomatoRating(marker, iw){
                 marker.zomato = JSON.parse(response.target.responseText).user_rating.aggregate_rating;
                 iw.setContent('<h3>' + marker.title + '</h3>Zomato Rating: ' + marker.zomato);
             }else{
-                console.log("ERROR", this.statusText);
+                alert('Unable to fetch information from Zomato.');
             }
         }
     };
+    xhr.onerror = function(){
+        alert('Network error occurred.');
+    };
     xhr.send();
-};
+}
 
 //Google map's init method, set in callback in script tag
 function initMap(){
@@ -109,12 +112,12 @@ function isMarkerShown(marker, places){
 function updateMarkers(fPlaces){
     for(var i = 0; i < markers.length; i++){
         if(isMarkerShown(markers[i], fPlaces)){
-            markers[i].setMap(map);
+            markers[i].setVisible(true);
         }else{
-            markers[i].setMap(null);
+            markers[i].setVisible(false);
         }
     }
-};
+}
 
 function findMarker(name){
     for(var i = 0; i < markers.length; i++){
@@ -122,7 +125,7 @@ function findMarker(name){
             return markers[i];
         }
     }
-};
+}
 
 
 //Knockout viewmodel setup
@@ -131,7 +134,7 @@ function PizzaPlace(name, stars){
     self.name = name;
     self.stars = stars;
     self.show = ko.observable(true);
-};
+}
 
 function PizzaMapViewModel() {
     var self = this;
